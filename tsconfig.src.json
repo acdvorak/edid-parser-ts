@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": ".tsbuildcache/src.tsbuildinfo",
+  },
+  "include": ["src", "tests", "global.d.ts"],
+}
