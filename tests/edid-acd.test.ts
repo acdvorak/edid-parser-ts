@@ -29,6 +29,8 @@ describe('EDID Parser - ACD Test Data', () => {
         checksumValid: true,
         baseBlock: {
           vendorId: 'SAM',
+          vendorName: 'Samsung Electric Company',
+          vendorBrand: 'Samsung',
           productCode: 29605,
           serialNumber: 16780800,
           manufactureWeek: 1,
@@ -80,6 +82,8 @@ describe('EDID Parser - ACD Test Data', () => {
         expectedExtensionCount: 1,
         baseBlock: {
           vendorId: 'APP',
+          vendorName: 'Apple Computer',
+          vendorBrand: 'Apple',
           productCode: 37415,
           serialNumber: 437063866,
           manufactureWeek: 13,
@@ -118,6 +122,8 @@ describe('EDID Parser - ACD Test Data', () => {
           headerValid: true,
           headerValidity: 'OK',
           vendorId: 'DEL',
+          vendorName: 'Dell',
+          vendorBrand: 'Dell',
           productCode: 61476,
           serialNumber: 1127761737,
           manufactureWeek: 28,

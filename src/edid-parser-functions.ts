@@ -46,6 +46,7 @@ import type {
   VideoFormatPreference,
   XyPixelRatio,
 } from './edid-parser-types';
+import { isExtendedTagBlock } from './edid-parser-utils';
 import { getEdidVendorBrand, getEdidVendorName } from './edid-vendor-functions';
 import type { EdidVendorId } from './edid-vendor-types';
 
@@ -245,36 +246,6 @@ function validateHeader(reader: BlockReader): boolean {
   );
 }
 
-export function isAudioBlock(
-  block: DataBlock | null | undefined,
-): block is AudioDataBlock {
-  return block?.tag.value === DATA_BLOCK_TYPE.AUDIO.value;
-}
-
-export function isVideoBlock(
-  block: DataBlock | null | undefined,
-): block is VideoDataBlock {
-  return block?.tag.value === DATA_BLOCK_TYPE.VIDEO.value;
-}
-
-export function isVendorBlock(
-  block: DataBlock | null | undefined,
-): block is VendorDataBlock {
-  return block?.tag.value === DATA_BLOCK_TYPE.VENDOR_SPECIFIC.value;
-}
-
-export function isSpeakerBlock(
-  block: DataBlock | null | undefined,
-): block is SpeakerDataBlock {
-  return block?.tag.value === DATA_BLOCK_TYPE.SPEAKER_ALLOCATION.value;
-}
-
-export function isExtendedTagBlock(
-  block: DataBlock | null | undefined,
-): block is ExtendedTagDataBlock {
-  return block?.tag.value === DATA_BLOCK_TYPE.EXTENDED_TAG.value;
-}
-
 // #endregion - Utils
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -357,13 +328,9 @@ function getEdidRevision(reader: BlockReader): number {
  * EISA ID = Extended Industry Standard Architecture Identifier.
  *
  * @example
- * "LGS" // LG Semicom Company Ltd
- * "SAM" // Samsung Electric Company
+ * "LGS" // LG
+ * "SAM" // Samsung
  * "SNY" // Sony
- *
- * @see https://github.com/robacklin/sigrok/blob/f4c3b93c0/decoders/edid/pnpids.txt
- * @see https://uefi.org/uefi-pnp-export
- * @see https://uefi.org/PNP_ACPI_Registry
  */
 function getVendorId(reader: BlockReader): EdidVendorId {
   const FIVE_BIT_LETTER_MASK = 0x1f;

@@ -12,18 +12,18 @@
 
 import { describe, expect, it } from 'vitest';
 
-import {
-  isAudioBlock,
-  isExtendedTagBlock,
-  isSpeakerBlock,
-  isVideoBlock,
-  parseEdid,
-} from '../src/edid-parser-functions';
+import { parseEdid } from '../src/edid-parser-functions';
 import type {
   DataBlock,
   ExtendedTagDataBlock,
   ParsedEdid,
 } from '../src/edid-parser-types';
+import {
+  isAudioBlock,
+  isExtendedTagBlock,
+  isSpeakerBlock,
+  isVideoBlock,
+} from '../src/edid-parser-utils';
 
 import {
   calculateChecksum,
