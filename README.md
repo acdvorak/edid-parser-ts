@@ -2,6 +2,8 @@
 
 **Pure TypeScript EDID parser** with _zero dependencies_.
 
+ESM and CJS.
+
 Supports _all JS runtimes_ (Node, browser, Deno, Bun, etc.).
 
 ## What is EDID?
@@ -79,6 +81,19 @@ For example:
 | `VSC` | ViewSonic    |
 | `VIZ` | Vizio        |
 
+### VID database
+
+There is no single, canonical, _correct_ list of all known VIDs, so I merged the
+following sources together and cleaned them up as best I could:
+
+- ⚠️ https://uefi.org/PNP_ID_List (paginated HTML) - incomplete; malformed names
+- ⚠️ https://uefi.org/UEFI-PNP-Export (plain text) - incomplete; malformed names
+- ⚠️
+  https://community.lansweeper.com/t5/managing-assets/list-of-3-letter-monitor-manufacturer-codes/ta-p/64429 -
+  incomplete
+
+See [`src/edid-vendor-constants.ts`](./src/edid-vendor-constants.ts).
+
 ### VID deprecation
 
 According to the
@@ -91,19 +106,8 @@ According to the
 > a 4-letter ACPI ID can be used for all situations where the ID is needed, for
 > example in creating device identifiers.
 
-As of early 2026, no manufacturers have started using ACPI IDs yet; VIDs are
-still the standard used in all displays.
-
-### VID database
-
-There is no single, high-quality, canonical list of VIDs, so I have merged the
-following sources and cleaned them up:
-
-- ⚠️ https://uefi.org/PNP_ID_List (paginated HTML) - incomplete; malformed names
-- ⚠️ https://uefi.org/UEFI-PNP-Export (plain text) - incomplete; malformed names
-- ⚠️
-  https://community.lansweeper.com/t5/managing-assets/list-of-3-letter-monitor-manufacturer-codes/ta-p/64429 -
-  incomplete
+As of early 2026, no manufacturers are using ACPI IDs yet; VIDs are still the
+standard identifier used in all displays.
 
 ## Usage
 
@@ -136,6 +140,8 @@ will output:
   "baseBlock": {
     "headerValid": true,
     "vendorId": "SAM",
+    "vendorName": "Samsung Electric Company",
+    "vendorBrand": "Samsung",
     "productCode": 29605,
     "serialNumber": 16780800,
     "manufactureWeek": 1,
