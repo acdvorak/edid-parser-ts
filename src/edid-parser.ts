@@ -7,6 +7,16 @@
  * Copyright (c) 2026 Andrew C. Dvorak <andy@andydvorak.net>
  */
 
+/*
+ * TODO(acdvorak):
+ *
+ * https://en.wikipedia.org/wiki/Extended_Display_Identification_Data#Monitor_Descriptors
+ *
+ * - FF: Monitor serial number (ASCII text)
+ * - FE: Unspecified text (ASCII text)
+ * - FC: Monitor name (ASCII text), for example "PHL 223V5".
+ */
+
 import {
   DATA_BLOCK_TYPE,
   EDID_BLOCK_LENGTH,
