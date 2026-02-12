@@ -21,7 +21,7 @@ import {
   DATA_BLOCK_TYPE,
   EDID_BLOCK_LENGTH,
   EXTENDED_DATA_BLOCK_TYPE,
-} from './edid-constants';
+} from './edid-parser-constants';
 import type {
   AudioDataBlock,
   BasicDisplayParams,
@@ -30,10 +30,9 @@ import type {
   Dtd,
   ExtBlock,
   ExtendedTagDataBlock,
+  IeeeOuiTypeMap,
   ParsedBaseEdidBlock,
   ParsedEdid,
-  ParsedEdidDebug,
-  ParsedEdidSummary,
   ParsedEdidWarning,
   ParsedEdidWarningCode,
   ParsedExtensionBlock,
@@ -46,12 +45,9 @@ import type {
   VideoDataBlock,
   VideoFormatPreference,
   XyPixelRatio,
-} from './edid-types';
-
-interface NumericEnumEntry {
-  string: Uppercase<string>;
-  value: number;
-}
+} from './edid-parser-types';
+import { getEdidVendorBrand, getEdidVendorName } from './edid-vendor-functions';
+import type { EdidVendorId } from './edid-vendor-types';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -132,13 +128,11 @@ const SYNC_TYPE_ENUM = {
   DIGITAL_SEPARATE: 0x03,
 } as const;
 
-const IEEE_OUI_TYPE = {
+const IEEE_OUI_TYPE: IeeeOuiTypeMap = {
   HDMI14: { string: 'HDMI14', value: 0x000c03 },
   HDMI20: { string: 'HDMI20', value: 0xc45dd8 },
   HDMI_FORUM: { string: 'HDMI FORUM', value: 0xc45dd8 },
-} as const satisfies Record<Uppercase<string>, NumericEnumEntry>;
-
-export type IeeeOuiTypeMap = typeof IEEE_OUI_TYPE;
+};
 
 const OVERSCAN_BEHAVIOR = [
   'No data',
@@ -371,7 +365,7 @@ function getEdidRevision(reader: BlockReader): number {
  * @see https://uefi.org/uefi-pnp-export
  * @see https://uefi.org/PNP_ACPI_Registry
  */
-function getVendorId(reader: BlockReader): string {
+function getVendorId(reader: BlockReader): EdidVendorId {
   const FIVE_BIT_LETTER_MASK = 0x1f;
   const EISA_ID_BYTE1 = 8;
   const EISA_ID_BYTE2 = 9;
@@ -391,9 +385,12 @@ function getVendorId(reader: BlockReader): string {
     (secondLetterTop << LETTER2_TOP_BYTES) | secondLetterBottom;
   const thirdLetter = byte2 & FIVE_BIT_LETTER_MASK;
 
-  return (
-    intToAscii(firstLetter) + intToAscii(secondLetter) + intToAscii(thirdLetter)
-  );
+  const vid: string =
+    intToAscii(firstLetter) +
+    intToAscii(secondLetter) +
+    intToAscii(thirdLetter);
+
+  return vid as EdidVendorId;
 }
 
 function getProductCode(reader: BlockReader): number {
@@ -2044,7 +2041,11 @@ function parseBaseBlock(
   baseBlock.headerValid = validateHeader(reader);
   baseBlock.headerValidity = baseBlock.headerValid ? 'OK' : 'ERROR';
 
-  baseBlock.vendorId = getVendorId(reader);
+  const vid = getVendorId(reader);
+
+  baseBlock.vendorId = vid;
+  baseBlock.vendorName = getEdidVendorName(vid) || undefined;
+  baseBlock.vendorBrand = getEdidVendorBrand(vid);
   baseBlock.productCode = getProductCode(reader);
   baseBlock.serialNumber = getSerialNumber(reader);
 
@@ -2299,54 +2300,6 @@ export function parseEdid(
   const headerValid = baseBlock.headerValid;
   const checksumValid = baseBlock.checksumValid;
 
-  const summary: ParsedEdidSummary = {
-    validHeader: baseBlock.headerValidity,
-    vendorId: baseBlock.vendorId,
-    productCode: baseBlock.productCode,
-    serialNumber: baseBlock.serialNumber,
-    manufactureDate: baseBlock.manufactureDate,
-    edidVersion: baseBlock.edidVersionString,
-    numberOfExtensions: baseBlock.numberOfExtensions,
-    checksum: baseBlock.checksum,
-  };
-
-  const legacyExts: ExtBlock[] = extensions.map((ext) => {
-    return {
-      blockNumber: ext.blockNumber,
-      extTag: ext.extTag,
-      revisionNumber: ext.revisionNumber,
-      dtdStart: ext.dtdStart,
-      numDtds: ext.numDtds,
-      underscan: ext.underscan,
-      basicAudio: ext.basicAudio,
-      ycbcr444: ext.ycbcr444,
-      ycbcr422: ext.ycbcr422,
-      dataBlockCollection: ext.dataBlockCollection,
-      dtds: ext.dtds,
-      checksum: ext.checksum,
-    };
-  });
-
-  const debug: ParsedEdidDebug = {
-    legacy: {
-      validHeader: baseBlock.headerValidity,
-      vendorId: baseBlock.vendorId,
-      productCode: baseBlock.productCode,
-      serialNumber: baseBlock.serialNumber,
-      manufactureDate: baseBlock.manufactureDate,
-      edidVersion: baseBlock.edidVersionString,
-      bdp: baseBlock.basicDisplayParams,
-      chromaticity: baseBlock.chromaticity,
-      timingBitmap: baseBlock.timingBitmap,
-      standardDisplayModes: baseBlock.standardDisplayModes,
-      dtds: baseBlock.dtds,
-      numberOfExtensions: baseBlock.numberOfExtensions,
-      checksum: baseBlock.checksum,
-      exts: legacyExts,
-      videoBlock: extensionContext.lastVideoBlock,
-    },
-  };
-
   return {
     bytes,
     warnings,
@@ -2355,8 +2308,6 @@ export function parseEdid(
     expectedExtensionCount,
     baseBlock,
     extensions,
-    summary,
-    debug,
   };
 }
 

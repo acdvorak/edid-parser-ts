@@ -5,6 +5,12 @@
 
 import type { Tagged, ValueOf } from 'type-fest';
 
+import type {
+  EdidVendorBrand,
+  EdidVendorId,
+  EdidVendorName,
+} from './edid-vendor-types';
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // #region - Data Blocks
@@ -443,7 +449,9 @@ export interface ParsedBaseEdidBlock {
   rawBytes: Uint8ClampedArray;
   headerValid?: boolean;
   headerValidity?: 'OK' | 'ERROR';
-  vendorId?: string;
+  vendorId?: EdidVendorId;
+  vendorName?: EdidVendorName;
+  vendorBrand?: EdidVendorBrand;
   productCode?: number;
   serialNumber?: number;
   manufactureWeek?: number;
@@ -468,37 +476,6 @@ export interface ParsedExtensionBlock extends ExtBlock {
   extensionType?: 'cta-861' | 'unknown';
 }
 
-export interface ParsedEdidSummary {
-  validHeader?: 'OK' | 'ERROR';
-  vendorId?: string;
-  productCode?: number;
-  serialNumber?: number;
-  manufactureDate?: string;
-  edidVersion?: string;
-  numberOfExtensions?: number;
-  checksum?: number;
-}
-
-export interface ParsedEdidDebug {
-  legacy: {
-    validHeader?: 'OK' | 'ERROR';
-    vendorId?: string;
-    productCode?: number;
-    serialNumber?: number;
-    manufactureDate?: string;
-    edidVersion?: string;
-    bdp?: BasicDisplayParams;
-    chromaticity?: ChromaticityCoordinates;
-    timingBitmap?: number;
-    standardDisplayModes?: StandardDisplayMode[];
-    dtds?: Dtd[];
-    numberOfExtensions?: number;
-    checksum?: number;
-    exts: ExtBlock[];
-    videoBlock?: VideoDataBlock;
-  };
-}
-
 export interface ParsedEdid {
   bytes: Uint8ClampedArray;
   warnings: ParsedEdidWarning[];
@@ -507,8 +484,6 @@ export interface ParsedEdid {
   expectedExtensionCount?: number;
   baseBlock: ParsedBaseEdidBlock;
   extensions: ParsedExtensionBlock[];
-  summary?: ParsedEdidSummary;
-  debug?: ParsedEdidDebug;
 }
 
 // #endregion - Parsed

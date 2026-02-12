@@ -12,7 +12,7 @@ import type {
   ExtendedDataBlockTypeMap,
   IeeeOuiTypeMap,
   XyPixelRatio,
-} from './edid-types';
+} from './edid-parser-types';
 
 export const EDID_BLOCK_LENGTH = 128;
 

@@ -6,8 +6,8 @@
 import type { PartialDeep } from 'type-fest';
 import { describe, expect, it } from 'vitest';
 
-import { parseEdid } from '../src/edid-parser';
-import type { ParsedEdid } from '../src/edid-types';
+import { parseEdid } from '../src/edid-parser-functions';
+import type { ParsedEdid } from '../src/edid-parser-types';
 
 import {
   APPLE_TB27_BYTES,
@@ -61,16 +61,6 @@ describe('EDID Parser - ACD Test Data', () => {
             checksumValid: true,
           },
         ],
-        summary: {
-          validHeader: 'OK',
-          vendorId: 'SAM',
-          productCode: 29605,
-          serialNumber: 16780800,
-          manufactureDate: '1/2023',
-          edidVersion: '1.3',
-          numberOfExtensions: 1,
-          checksum: 30,
-        },
       });
     });
   });
@@ -107,16 +97,6 @@ describe('EDID Parser - ACD Test Data', () => {
             extensionType: 'cta-861',
           },
         ],
-        summary: {
-          validHeader: 'OK',
-          vendorId: 'APP',
-          productCode: 37415,
-          serialNumber: 437063866,
-          manufactureDate: '13/2016',
-          edidVersion: '1.4',
-          numberOfExtensions: 1,
-          checksum: 78,
-        },
       });
     });
   });
@@ -160,16 +140,6 @@ describe('EDID Parser - ACD Test Data', () => {
             checksumValid: true,
           },
         ],
-        summary: {
-          validHeader: 'OK',
-          vendorId: 'DEL',
-          productCode: 61476,
-          serialNumber: 1127761737,
-          manufactureDate: '28/2012',
-          edidVersion: '1.3',
-          numberOfExtensions: 1,
-          checksum: 52,
-        },
       });
     });
   });

@@ -18,12 +18,12 @@ import {
   isSpeakerBlock,
   isVideoBlock,
   parseEdid,
-} from '../src/edid-parser';
+} from '../src/edid-parser-functions';
 import type {
   DataBlock,
   ExtendedTagDataBlock,
   ParsedEdid,
-} from '../src/edid-types';
+} from '../src/edid-parser-types';
 
 import {
   calculateChecksum,

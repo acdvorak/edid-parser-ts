@@ -13,7 +13,11 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { isVendorBlock, isVideoBlock, parseEdid } from '../src/edid-parser';
+import {
+  isVendorBlock,
+  isVideoBlock,
+  parseEdid,
+} from '../src/edid-parser-functions';
 
 import {
   calculateChecksum,

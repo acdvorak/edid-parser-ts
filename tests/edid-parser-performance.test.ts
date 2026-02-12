@@ -12,7 +12,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { parseEdid } from '../src/edid-parser';
+import { parseEdid } from '../src/edid-parser-functions';
 
 import {
   createFullEdidArray,
