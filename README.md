@@ -1,176 +1,166 @@
-# @acdvorak/edid-parser
+# @acdvorak/edid-parser-ts
 
-Pure TypeScript EDID parser with zero dependencies. Supports all JS runtimes.
+**Pure TypeScript EDID parser** with _zero dependencies_.
+
+Supports _all JS runtimes_ (Node, browser, Deno, Bun, etc.).
+
+## What is EDID?
+
+EDID is a small **array of bytes**, hard-coded into a monitor or TV's firmware
+at manufacture time, that advertises which features a physical display _claims_
+to support.
+
+Crucially, EDID _cannot_ tell us anything about the **current**, active display
+mode, and it _cannot_ tell us whether a given display mode is actually usable
+with the current setup. It can only tell us which display modes the monitor/TV
+is _probably_ capable of displaying IFF the GPU and cable can also deliver them.
+
+### Metadata
+
+From EDID you can _usually_ derive:
+
+- Manufacturer ID (Apple, Samsung, LG, etc.)
+- Product ID
+- Serial number (sometimes; may be missing, garbage, or occasionally useful)
+- Physical dimensions (width and height in inches or centimeters)
+- List of supported resolutions, refresh rates, pixel formats, and colorimetry
+
+With extension blocks, you may also see things like:
+
+- Audio support (codecs, channel counts, sample rates)
+- Color spaces (RGB / Y'CbCr variants)
+- Deep color and bits-per-channel _claims_
+- HDR signaling support (HDR10 / HLG / Dolby Vision metadata patterns, EOTF
+  support, luminance hints)
+- VRR-related signaling (when present, often via HDMI Forum VRR / Adaptive-Sync
+  indicators rather than a single universal flag)
+
+### Gotchas
+
+Real-world traps:
+
+1. **Static metadata**: EDID bytes are effectively baked into the display's
+   firmware at manufacturing/assembly time: **they do not change** when the user
+   switches the current resolution/refresh/HDR mode, and they **do not tell you
+   the active mode** - only OS/GPU APIs can do that.
+2. **Variable quality**: EDID data quality varies _wildly_. Blocks can be
+   incomplete, wrong, copy-pasted across models, updated in later revisions, or
+   even spoofed/overridden by docks, KVMs, adapters, and drivers.
+3. **Non-unique**: EDIDs are not guaranteed to be globally unique. In
+   particular, serial numbers are often missing or duplicated.
+
+If you need robust display identification and "what's active right now?"
+answers, treat EDID as an identity _hint_ + capability _claims_, and combine it
+with other signals (OS display IDs, connector/path info, sink OUI/vendor blocks,
+and runtime mode queries).
+
+## Vendor IDs
+
+Plug-n-Play Vendor IDs (aka PNP IDs or VIDs) are 3-letter codes that uniquely
+identify the manufacturer of a display.
+
+Vendor IDs consist of 3 uppercase Latin letters (A-Z). Manufacturers can and
+often do have multiple VIDs.
+
+For example:
+
+| VID   | Manufacturer |
+| :---- | :----------- |
+| `APP` | Apple        |
+| `BNQ` | BenQ         |
+| `DEL` | Dell         |
+| `HEC` | Hisense      |
+| `LEN` | Lenovo       |
+| `LGD` | LG           |
+| `MDO` | Panasonic    |
+| `SAM` | Samsung      |
+| `SHP` | Sharp        |
+| `SNY` | Sony         |
+| `VSC` | ViewSonic    |
+| `VIZ` | Vizio        |
+
+### VID deprecation
+
+According to the
+[Unified Extensible Firmware Interface Forum](https://uefi.org/PNP_ACPI_Registry):
+
+> **Sunset of Vendor IDs in PnP Form**
+>
+> Starting at the end of 2024, the UEFI Forum no longer issues new 3-letter Plug
+> and Play (PnP) Vendor Identifiers (a "VID"). For ACPI implementation purposes,
+> a 4-letter ACPI ID can be used for all situations where the ID is needed, for
+> example in creating device identifiers.
+
+As of early 2026, no manufacturers have started using ACPI IDs yet; VIDs are
+still the standard used in all displays.
+
+### VID database
+
+There is no single, high-quality, canonical list of VIDs, so I have merged the
+following sources and cleaned them up:
+
+- ⚠️ https://uefi.org/PNP_ID_List (paginated HTML) - incomplete; malformed names
+- ⚠️ https://uefi.org/UEFI-PNP-Export (plain text) - incomplete; malformed names
+- ⚠️
+  https://community.lansweeper.com/t5/managing-assets/list-of-3-letter-monitor-manufacturer-codes/ta-p/64429 -
+  incomplete
 
 ## Usage
 
 ```ts
-import { ParsedEdid, parseEdid } from '@acdvorak/edid-parser';
+import { parseEdid } from '@acdvorak/edid-parser-ts';
 
 /**
  * Samsung S95C series, model QN65S95CAF, mfg. 2023.
  *
- * - 4K UHD
- * - HDR10+
- * - 144 Hz max
- * - VRR up to 120 Hz
+ * 4K UHD, HDR10+, VRR up to 120 Hz, 144 Hz max.
  *
  * @see https://www.displayspecifications.com/en/model/fcb13131
  * @see https://www.flatpanelshd.com/samsung_qs95c_qdoled_2023.php
  */
-const SAMSUNG_S95C_BYTES = new Uint8Array([
+const SAMSUNG_S95C_EDID_BYTES = new Uint8Array([
   0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x4c, 0x2d, 0xa5, 0x73, 0x00,
   0x0e, 0x00, 0x01, 0x01, 0x21, 0x01, 0x03, 0x80, 0x8e, 0x50, 0x78, 0x0a, 0xf4,
-  0x11, 0xb2, 0x4a, 0x41, 0xb3, 0x26, 0x0e, 0x50, 0x54, 0xbd, 0xef, 0x80, 0x71,
-  0x4f, 0x81, 0xc0, 0x81, 0x00, 0x81, 0x80, 0x95, 0x00, 0xa9, 0xc0, 0xb3, 0x00,
-  0xd1, 0xc0, 0x08, 0xe8, 0x00, 0x30, 0xf2, 0x70, 0x5a, 0x80, 0xb0, 0x58, 0x8a,
-  0x00, 0x50, 0x1d, 0x74, 0x00, 0x00, 0x1e, 0x6f, 0xc2, 0x00, 0xa0, 0xa0, 0xa0,
-  0x55, 0x50, 0x30, 0x20, 0x35, 0x00, 0x50, 0x1d, 0x74, 0x00, 0x00, 0x1a, 0x00,
-  0x00, 0x00, 0xfd, 0x00, 0x18, 0x78, 0x0f, 0xff, 0x8f, 0x00, 0x0a, 0x20, 0x20,
-  0x20, 0x20, 0x20, 0x20, 0x00, 0x00, 0x00, 0xfc, 0x00, 0x51, 0x43, 0x51, 0x39,
-  0x35, 0x53, 0x0a, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x01, 0x1e, 0x02, 0x03,
-  0x75, 0xf0, 0xe2, 0x78, 0x03, 0x5a, 0x61, 0x60, 0x65, 0x66, 0x75, 0x76, 0xda,
-  0xdb, 0x10, 0x1f, 0x04, 0x13, 0x05, 0x14, 0x20, 0x21, 0x22, 0x40, 0x3f, 0x5d,
-  0x5e, 0x5f, 0x62, 0x64, 0x03, 0x12, 0x2f, 0x0d, 0x57, 0x07, 0x09, 0x07, 0x07,
-  0x15, 0x07, 0x50, 0x57, 0x07, 0x01, 0x67, 0x54, 0x07, 0x83, 0x0f, 0x00, 0x00,
-  0xe2, 0x00, 0x4f, 0xe3, 0x05, 0xc3, 0x01, 0x6e, 0x03, 0x0c, 0x00, 0x20, 0x00,
-  0xb8, 0x44, 0x28, 0x00, 0x80, 0x01, 0x02, 0x03, 0x04, 0x6d, 0xd8, 0x5d, 0xc4,
-  0x01, 0x78, 0x80, 0x5b, 0x42, 0x30, 0x90, 0xd1, 0x34, 0x05, 0xe3, 0x06, 0x0d,
-  0x01, 0xe2, 0x0f, 0xff, 0xe5, 0x01, 0x8b, 0x84, 0x90, 0x81, 0x6d, 0x1a, 0x00,
-  0x00, 0x02, 0x07, 0x30, 0x90, 0x00, 0x04, 0x76, 0x02, 0x4b, 0x02, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xb9, 0x02, 0x03, 0x04, 0xf0,
-  0x58, 0x4d, 0x00, 0xb8, 0xa1, 0x38, 0x14, 0x40, 0xf8, 0x2c, 0x45, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x1e, 0x5c, 0xc1, 0x00, 0xe4, 0xa2, 0x38, 0xaa, 0x40,
-  0x24, 0x2c, 0x45, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1e, 0xcf, 0xcb, 0x00,
-  0x80, 0xf5, 0x40, 0x3a, 0x60, 0x20, 0xa0, 0x3a, 0x50, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x1c, 0x1a, 0x68, 0x00, 0xa0, 0xf0, 0x38, 0x1f, 0x40, 0x30, 0x20, 0x3a,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1a, 0x74, 0xd6, 0x00, 0xa0, 0xf0, 0x38,
-  0x40, 0x40, 0x30, 0x20, 0x3a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1a, 0x5a,
-  0x87, 0x80, 0xa0, 0x70, 0x38, 0x4d, 0x40, 0x30, 0x20, 0x35, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x1a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x57, 0x70, 0x12, 0x79, 0x00, 0x00, 0x03,
-  0x01, 0x64, 0x26, 0xaf, 0x01, 0x08, 0xff, 0x0e, 0xef, 0x05, 0x4f, 0x01, 0xa7,
-  0x01, 0x3f, 0x06, 0x74, 0x00, 0x02, 0x80, 0x09, 0x00, 0x51, 0x2c, 0x02, 0x08,
-  0xff, 0x0e, 0x2f, 0x02, 0xf7, 0x80, 0x1f, 0x00, 0x6f, 0x08, 0x59, 0x00, 0x4b,
-  0x00, 0x07, 0x00, 0xea, 0xb7, 0x00, 0x08, 0xff, 0x09, 0xab, 0x00, 0x07, 0x80,
-  0x1f, 0x00, 0x37, 0x04, 0x75, 0x00, 0x3e, 0x00, 0x07, 0x00, 0x86, 0x94, 0x01,
-  0x08, 0xff, 0x0e, 0x67, 0x01, 0x93, 0x80, 0x1f, 0x00, 0x3f, 0x06, 0x71, 0x00,
-  0x63, 0x00, 0x07, 0x00, 0x1d, 0xff, 0x00, 0x08, 0xff, 0x0e, 0x4f, 0x00, 0x07,
-  0x80, 0x1f, 0x00, 0x37, 0x04, 0x4c, 0x00, 0x3e, 0x00, 0x07, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0xa2, 0x90,
+  // ...
 ]);
 
-const parsedEdid: ParsedEdid = parseEdid(SAMSUNG_S95C_BYTES);
+const parsedEdid: ParsedEdid = parseEdid(SAMSUNG_S95C_EDID_BYTES);
 
 console.log(parsedEdid);
 ```
 
 will output:
 
-```json
+```jsonc
 {
-  "headerValid": true,
-  "checksumValid": true,
-  "expectedExtensionCount": 1,
   "baseBlock": {
     "headerValid": true,
-    "headerValidity": "OK",
-    "eisaId": "SAM",
+    "vendorId": "SAM",
     "productCode": 29605,
     "serialNumber": 16780800,
     "manufactureWeek": 1,
     "manufactureYear": 2023,
     "manufactureDate": "1/2023",
-    "edidVersion": 1,
-    "edidRevision": 3,
     "edidVersionString": "1.3",
-    "basicDisplayParams": {
-      "digitalInput": true,
-      "vesaDfpCompatible": false,
-      "maxHorImgSize": 142,
-      "maxVertImgSize": 80,
-      "displayGamma": 2.195294117647059,
-      "dpmsStandby": false,
-      "dpmsSuspend": false,
-      "dpmsActiveOff": false,
-      "displayType": 1,
-      "standardSRgb": false,
-      "preferredTiming": true,
-      "gtfSupported": false
-    },
-    "chromaticity": {
-      "redX": 715,
-      "redXCoords": 0.6982421875,
-      "redY": 299,
-      "redYCoords": 0.2919921875,
-      "greenX": 261,
-      "greenXCoords": 0.2548828125,
-      "greenY": 716,
-      "greenYCoords": 0.69921875,
-      "blueX": 152,
-      "blueXCoords": 0.1484375,
-      "blueY": 57,
-      "blueYCoords": 0.0556640625,
-      "whiteX": 320,
-      "whiteXCoords": 0.3125,
-      "whiteY": 337,
-      "whiteYCoords": 0.3291015625
-    },
-    "timingBitmap": 12447616,
     "standardDisplayModes": [
       {
-        "xResolution": 1152,
-        "xyPixelRatio": 1,
-        "vertFreq": 75
-      },
-      {
         "xResolution": 1280,
         "xyPixelRatio": 3,
-        "vertFreq": 60
+        "vertFreq": 60,
       },
-      {
-        "xResolution": 1280,
-        "xyPixelRatio": 0,
-        "vertFreq": 60
-      },
-      {
-        "xResolution": 1280,
-        "xyPixelRatio": 2,
-        "vertFreq": 60
-      },
-      {
-        "xResolution": 1440,
-        "xyPixelRatio": 0,
-        "vertFreq": 60
-      },
-      {
-        "xResolution": 1600,
-        "xyPixelRatio": 3,
-        "vertFreq": 60
-      },
-      {
-        "xResolution": 1680,
-        "xyPixelRatio": 0,
-        "vertFreq": 60
-      },
+      // ...
       {
         "xResolution": 1920,
         "xyPixelRatio": 3,
-        "vertFreq": 60
-      }
+        "vertFreq": 60,
+      },
     ],
     "dtds": [
       {
-        "pixelClock": 594,
         "horActivePixels": 3840,
         "horBlankPixels": 560,
         "vertActivePixels": 2160,
         "vertBlankPixels": 90,
-        "horSyncOff": 176,
-        "horSyncPulse": 88,
-        "vertSyncOff": 8,
-        "vertSyncPulse": 10,
         "horDisplaySize": 1872,
         "vertDisplaySize": 1053,
         "horBorderPixels": 0,
@@ -178,20 +168,12 @@ will output:
         "interlaced": false,
         "stereoMode": 0,
         "syncType": 3,
-        "vSyncPolarity": true,
-        "hSyncPolarity": true,
-        "twoWayStereo": false
       },
       {
-        "pixelClock": 497.75,
         "horActivePixels": 2560,
         "horBlankPixels": 160,
         "vertActivePixels": 1440,
         "vertBlankPixels": 85,
-        "horSyncOff": 48,
-        "horSyncPulse": 32,
-        "vertSyncOff": 3,
-        "vertSyncPulse": 5,
         "horDisplaySize": 1872,
         "vertDisplaySize": 1053,
         "horBorderPixels": 0,
@@ -199,15 +181,143 @@ will output:
         "interlaced": false,
         "stereoMode": 0,
         "syncType": 3,
-        "vSyncPolarity": false,
-        "hSyncPolarity": true,
-        "twoWayStereo": false
-      }
+      },
     ],
-    "numberOfExtensions": 1,
-    "checksum": 30,
-    "checksumValid": true
-  }
+  },
+  "extensions": [
+    {
+      "blockNumber": 1,
+      "extTag": 2,
+      "revisionNumber": 3,
+      "dtdStart": 117,
+      "numDtds": 0,
+      "underscan": true,
+      "basicAudio": true,
+      "ycbcr444": true,
+      "ycbcr422": true,
+      "dtds": [],
+      "checksum": 185,
+      "extensionType": "cta-861",
+      "dataBlockCollection": [
+        {
+          "tag": {
+            "string": "EXTENDED TAG",
+            "value": 7,
+          },
+          "length": 2,
+          "extendedTag": {
+            "string": "VIDEO CAPABILITY",
+            "value": 0,
+          },
+          "quantizationRangeYCC": false,
+          "quantizationRangeRGB": true,
+          "overscanPT": "No data",
+          "overscanIT": "Supports both overscan and underscan",
+          "overscanCE": "Supports both overscan and underscan",
+        },
+        {
+          "tag": {
+            "string": "EXTENDED TAG",
+            "value": 7,
+          },
+          "length": 3,
+          "extendedTag": {
+            "string": "COLORIMETRY",
+            "value": 5,
+          },
+          "supportsBT2020RGB": true,
+          "supportsBT2020YCC": true,
+          "supportsBT2020cYCC": false,
+          "supportsAdobeRGB": false,
+          "supportsAdobeYCC601": false,
+          "supportssYCC601": false,
+          "supportsxvYCC709": true,
+          "supportsxvYCC601": true,
+          "gamutMD3": 0,
+          "gamutMD2": 0,
+          "gamutMD1": 0,
+          "gamutMD0": 1,
+        },
+        {
+          "tag": {
+            "string": "VENDOR SPECIFIC",
+            "value": 3,
+          },
+          "length": 14,
+          "ieeeIdentifier": 3075,
+          "physicalAddress": 8192,
+          "supportsAI": true,
+          "deepColor48": false,
+          "deepColor36": true,
+          "deepColor30": true,
+          "deepColorY444": true,
+          "dualDvi": false,
+          "maxTmdsRate": 340,
+          "latencyPresent": false,
+          "iLatencyPresent": false,
+        },
+        {
+          "tag": {
+            "string": "VENDOR SPECIFIC",
+            "value": 3,
+          },
+          "length": 13,
+          "ieeeIdentifier": 12869080,
+          "hdmiForumFeatures": {
+            "scdcPresent": true,
+            "supportsQMS": true,
+            "supportsALLM": true,
+            "supportsVESADSC12a": true,
+            "supportsCompressedVideo420": true,
+            "supportsQMSTFRmin": true,
+            "supports10bpcCompressedVideo": true,
+          },
+          "version": 1,
+          "maxTMDSCharacterRate": 600,
+          "supportsSCDC": true,
+          "supportsSCDCRR": false,
+          "maxFixedRateLink": "4 lanes @ 10 Gbps",
+          "vrrMin": 48,
+          "vrrMax": 144,
+        },
+        {
+          "tag": {
+            "string": "EXTENDED TAG",
+            "value": 7,
+          },
+          "length": 3,
+          "extendedTag": {
+            "string": "HDR STATIC METADATA",
+            "value": 6,
+          },
+          "supportedEOTFs": [
+            "Traditional gamma - SDR luminance range",
+            "SMPTE ST2084 (PQ)",
+            "Hybrid Log-Gamma (HLG)",
+          ],
+          "supportedStaticMetadataDescriptors": ["Static Metadata Type 1"],
+        },
+        {
+          "tag": {
+            "string": "EXTENDED TAG",
+            "value": 7,
+          },
+          "length": 2,
+          "extendedTag": {
+            "string": "YCBCR420_CAPABILITY_MAP",
+            "value": 15,
+          },
+          "YCbCr420CapableShortVideoDescriptors": [
+            {
+              "vic": 97,
+              "nativeResolution": false,
+            },
+            // ...
+          ],
+        },
+      ],
+    },
+  ],
 }
 ```
 
@@ -230,3 +340,9 @@ npm run test
 ```bash
 npm run build
 ```
+
+## Credit
+
+This package is a TypeScript fork of https://github.com/dgallegos/edidreader.
+They did all the hard work of figuring out how to actually parse the giant ball
+of crazy that is EDID; all I did was slap some typedefs on top of it.
