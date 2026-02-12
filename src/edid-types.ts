@@ -443,7 +443,7 @@ export interface ParsedBaseEdidBlock {
   rawBytes: Uint8ClampedArray;
   headerValid?: boolean;
   headerValidity?: 'OK' | 'ERROR';
-  eisaId?: string;
+  vendorId?: string;
   productCode?: number;
   serialNumber?: number;
   manufactureWeek?: number;
@@ -470,7 +470,7 @@ export interface ParsedExtensionBlock extends ExtBlock {
 
 export interface ParsedEdidSummary {
   validHeader?: 'OK' | 'ERROR';
-  eisaId?: string;
+  vendorId?: string;
   productCode?: number;
   serialNumber?: number;
   manufactureDate?: string;
@@ -480,34 +480,9 @@ export interface ParsedEdidSummary {
 }
 
 export interface ParsedEdidDebug {
-  tables: {
-    whiteAndSyncLevels: string[];
-    digitalColorSpace: string[];
-    analogColorSpace: string[];
-    establishedTimingBitmaps: string[];
-    xyPixelRatioEnum: XyPixelRatio[];
-    syncTypeEnum: {
-      ANALOG_COMPOSITE: number;
-      BIPOLAR_ANALOG_COMPOSITE: number;
-      DIGITAL_COMPOSITE: number;
-      DIGITAL_SEPARATE: number;
-    };
-    dataBlockType: DataBlockTypeMap;
-    extendedDataBlockType: ExtendedDataBlockTypeMap;
-    ieeeOuiType: IeeeOuiTypeMap;
-    overscanBehavior: string[];
-    audioFormatArray: number[];
-    shortAudioDescriptors: string[];
-    sadSampleRates: string[];
-    sadBitDepths: string[];
-    eotfTypes: string[];
-    staticMetadataDescriptors: string[];
-    shortVideoDescriptors: ShortVideoDescriptor[];
-    speakerAllocation: string[];
-  };
   legacy: {
     validHeader?: 'OK' | 'ERROR';
-    eisaId?: string;
+    vendorId?: string;
     productCode?: number;
     serialNumber?: number;
     manufactureDate?: string;

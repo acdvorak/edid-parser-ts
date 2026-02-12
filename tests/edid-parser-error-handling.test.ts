@@ -158,8 +158,8 @@ describe('EDID Error Handling and Edge Cases', () => {
       ]);
 
       const parsed = parseEdid(new Uint8ClampedArray(invalidIdEdid));
-      expect(typeof parsed.baseBlock.eisaId).toBe('string');
-      expect(parsed.baseBlock.eisaId?.length).toBe(3);
+      expect(typeof parsed.baseBlock.vendorId).toBe('string');
+      expect(parsed.baseBlock.vendorId?.length).toBe(3);
     });
 
     it('should handle manufacturer ID with invalid character mappings', () => {
@@ -168,8 +168,8 @@ describe('EDID Error Handling and Edge Cases', () => {
       ]);
 
       const parsed = parseEdid(new Uint8ClampedArray(edgeIdEdid));
-      expect(parsed.baseBlock.eisaId).toBeDefined();
-      expect(parsed.baseBlock.eisaId?.length).toBeGreaterThanOrEqual(0);
+      expect(parsed.baseBlock.vendorId).toBeDefined();
+      expect(parsed.baseBlock.vendorId?.length).toBeGreaterThanOrEqual(0);
     });
   });
 
@@ -392,7 +392,7 @@ describe('EDID Error Handling and Edge Cases', () => {
         parsed = parseEdid(new Uint8ClampedArray(edidData));
       }
 
-      expect(parsed.baseBlock.eisaId).toBe('SAM');
+      expect(parsed.baseBlock.vendorId).toBe('SAM');
       expect(parsed.baseBlock.numberOfExtensions).toBe(1);
     });
 
@@ -401,13 +401,13 @@ describe('EDID Error Handling and Edge Cases', () => {
       const edidData = createFullEdidArray(testData);
 
       const parsed = parseEdid(new Uint8ClampedArray(edidData));
-      const originalEisa = parsed.baseBlock.eisaId;
+      const originalEisa = parsed.baseBlock.vendorId;
 
       edidData[8] = 0xff;
       edidData[9] = 0xff;
 
       const reparsed = parseEdid(new Uint8ClampedArray(edidData));
-      expect(reparsed.baseBlock.eisaId).not.toBe(originalEisa);
+      expect(reparsed.baseBlock.vendorId).not.toBe(originalEisa);
     });
   });
 

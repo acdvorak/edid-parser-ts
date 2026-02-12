@@ -28,7 +28,7 @@ describe('EDID Parser - ACD Test Data', () => {
         headerValid: true,
         checksumValid: true,
         baseBlock: {
-          eisaId: 'SAM',
+          vendorId: 'SAM',
           productCode: 29605,
           serialNumber: 16780800,
           manufactureWeek: 1,
@@ -63,7 +63,7 @@ describe('EDID Parser - ACD Test Data', () => {
         ],
         summary: {
           validHeader: 'OK',
-          eisaId: 'SAM',
+          vendorId: 'SAM',
           productCode: 29605,
           serialNumber: 16780800,
           manufactureDate: '1/2023',
@@ -89,7 +89,7 @@ describe('EDID Parser - ACD Test Data', () => {
         checksumValid: true,
         expectedExtensionCount: 1,
         baseBlock: {
-          eisaId: 'APP',
+          vendorId: 'APP',
           productCode: 37415,
           serialNumber: 437063866,
           manufactureWeek: 13,
@@ -109,7 +109,7 @@ describe('EDID Parser - ACD Test Data', () => {
         ],
         summary: {
           validHeader: 'OK',
-          eisaId: 'APP',
+          vendorId: 'APP',
           productCode: 37415,
           serialNumber: 437063866,
           manufactureDate: '13/2016',
@@ -137,7 +137,7 @@ describe('EDID Parser - ACD Test Data', () => {
         baseBlock: {
           headerValid: true,
           headerValidity: 'OK',
-          eisaId: 'DEL',
+          vendorId: 'DEL',
           productCode: 61476,
           serialNumber: 1127761737,
           manufactureWeek: 28,
@@ -162,7 +162,7 @@ describe('EDID Parser - ACD Test Data', () => {
         ],
         summary: {
           validHeader: 'OK',
-          eisaId: 'DEL',
+          vendorId: 'DEL',
           productCode: 61476,
           serialNumber: 1127761737,
           manufactureDate: '28/2012',

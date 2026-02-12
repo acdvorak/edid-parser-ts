@@ -133,7 +133,7 @@ describe('EDID Parser Performance Tests', () => {
 
       const firstParse = parseEdid(new Uint8ClampedArray(edidArray));
       const firstSummary = {
-        eisaId: firstParse.baseBlock.eisaId,
+        vendorId: firstParse.baseBlock.vendorId,
         productCode: firstParse.baseBlock.productCode,
         extensionCount: firstParse.baseBlock.numberOfExtensions,
         dataBlockCount:
@@ -142,7 +142,7 @@ describe('EDID Parser Performance Tests', () => {
 
       for (let i = 0; i < 5; i += 1) {
         const parsed = parseEdid(new Uint8ClampedArray(edidArray));
-        expect(parsed.baseBlock.eisaId).toBe(firstSummary.eisaId);
+        expect(parsed.baseBlock.vendorId).toBe(firstSummary.vendorId);
         expect(parsed.baseBlock.productCode).toBe(firstSummary.productCode);
         expect(parsed.baseBlock.numberOfExtensions).toBe(
           firstSummary.extensionCount,

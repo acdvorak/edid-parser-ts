@@ -127,7 +127,7 @@ describe('EDID Parser Integration Tests', () => {
         new Uint8ClampedArray(createFullEdidArray(samsungData)),
       );
 
-      expect(parsed.baseBlock.eisaId).toBe('SAM');
+      expect(parsed.baseBlock.vendorId).toBe('SAM');
       expect(parsed.baseBlock.edidVersionString).toBe('1.3');
       expect(parsed.extensions[0]?.extTag).toBe(0x02);
       expect(getDataBlocks(parsed).length).toBeGreaterThan(5);

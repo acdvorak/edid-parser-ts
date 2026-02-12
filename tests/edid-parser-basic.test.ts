@@ -70,7 +70,7 @@ describe('EDID Parser', () => {
       ]);
 
       const parsed = parseEdid(new Uint8ClampedArray(samsungEdid));
-      expect(parsed.baseBlock.eisaId).toBe('SAM');
+      expect(parsed.baseBlock.vendorId).toBe('SAM');
     });
   });
 
@@ -363,7 +363,7 @@ describe('EDID Parser', () => {
 
       const parsed = parseEdid(new Uint8ClampedArray(fullEdidWithChecksum));
       expect(parsed.baseBlock.headerValidity).toBe('OK');
-      expect(parsed.baseBlock.eisaId).toBe('SAM');
+      expect(parsed.baseBlock.vendorId).toBe('SAM');
       expect(parsed.baseBlock.productCode).toBe(0x7040);
       expect(parsed.baseBlock.serialNumber).toBe(1);
       expect(parsed.baseBlock.edidVersionString).toBe('1.4');

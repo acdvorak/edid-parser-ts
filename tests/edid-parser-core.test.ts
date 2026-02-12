@@ -91,7 +91,7 @@ describe('EDID Parser Core Tests', () => {
       );
 
       const parsed = parseEdid(new Uint8ClampedArray(base));
-      expect(parsed.baseBlock.eisaId).toBe('SAM');
+      expect(parsed.baseBlock.vendorId).toBe('SAM');
     });
 
     it('parses Dell manufacturer ID correctly', () => {
@@ -104,7 +104,7 @@ describe('EDID Parser Core Tests', () => {
       );
 
       const parsed = parseEdid(new Uint8ClampedArray(base));
-      expect(parsed.baseBlock.eisaId).toBe('DEL');
+      expect(parsed.baseBlock.vendorId).toBe('DEL');
     });
   });
 
