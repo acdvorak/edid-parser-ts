@@ -1,7 +1,7 @@
 {
   "name": "@acdvorak/edid-parser-ts",
   "type": "module",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Pure TypeScript EDID parser with zero dependencies. Exports ESM and CJS and supports all JS runtimes (Node, browser, Deno, Bun, etc.).",
   "author": "Andrew C. Dvorak <andy@andydvorak.net>",
   "license": "MIT",
