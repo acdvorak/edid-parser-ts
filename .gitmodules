@@ -1,0 +1,6 @@
+[submodule "submodules/linuxhw-edid"]
+	path = submodules/linuxhw-edid
+	url = https://github.com/linuxhw/EDID
+[submodule "submodules/hwdata-edid"]
+	path = submodules/hwdata-edid
+	url = https://github.com/vcrhonek/hwdata
