@@ -1,0 +1,6 @@
+out/
+data/
+dist/
+gen/
+submodules/
+LICENSE.md

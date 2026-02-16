@@ -1,0 +1,689 @@
+{
+  "ABO": [
+    "Acer"
+  ],
+  "ACE": [
+    "Acer"
+  ],
+  "ACI": [
+    "Ancor Communications"
+  ],
+  "ACR": [
+    "Acer"
+  ],
+  "ADT": [
+    "Advantech"
+  ],
+  "AIC": [
+    "Arnos Instruments"
+  ],
+  "AMI": [
+    "Amitech"
+  ],
+  "AMT": [
+    "AMT International"
+  ],
+  "AOP": [
+    "AOpen"
+  ],
+  "API": [
+    "Acer"
+  ],
+  "APP": [
+    "Apple"
+  ],
+  "AQS": [
+    "Aquarius"
+  ],
+  "ARG": [
+    "Alba"
+  ],
+  "ASB": [
+    "Prestigio"
+  ],
+  "ASU": [
+    "ASUS"
+  ],
+  "ATE": [
+    "Megavision"
+  ],
+  "ATV": [
+    "Ativa"
+  ],
+  "AUS": [
+    "ASUS"
+  ],
+  "BAL": [
+    "Balance"
+  ],
+  "BBY": [
+    "Insignia"
+  ],
+  "BEK": [
+    "Beko"
+  ],
+  "BGO": [
+    "Bangho"
+  ],
+  "BLS": [
+    "BUBALUS"
+  ],
+  "BMM": [
+    "Proview"
+  ],
+  "BNQ": [
+    "BenQ"
+  ],
+  "BRA": [
+    "Braview"
+  ],
+  "BTC": [
+    "RS"
+  ],
+  "BUF": [
+    "Buffalo"
+  ],
+  "CAL": [
+    "Albatron"
+  ],
+  "CAS": [
+    "CASIO"
+  ],
+  "CHH": [
+    "Changhong"
+  ],
+  "CHR": [
+    "AU Optronics"
+  ],
+  "CMO": [
+    "Chi Mei Optoelectronics"
+  ],
+  "COB": [
+    "COBY"
+  ],
+  "CPL": [
+    "COMPAL"
+  ],
+  "CPQ": [
+    "Compaq"
+  ],
+  "CSP": [
+    "Casper"
+  ],
+  "DEL": [
+    "Dell"
+  ],
+  "DIC": [
+    "Dinner"
+  ],
+  "DMO": [
+    "AU Optronics"
+  ],
+  "DON": [
+    "DENON"
+  ],
+  "DSG": [
+    "DSGR"
+  ],
+  "DTV": [
+    "Digital TV"
+  ],
+  "DVM": [
+    "RoverScan"
+  ],
+  "DWE": [
+    "Daewoo"
+  ],
+  "EHJ": [
+    "Epson"
+  ],
+  "EIZ": [
+    "Eizo"
+  ],
+  "ELE": [
+    "Element"
+  ],
+  "ELO": [
+    "Elo Touch"
+  ],
+  "ELS": [
+    "ELSA"
+  ],
+  "EMA": [
+    "eMachines"
+  ],
+  "EMI": [
+    "eMachines"
+  ],
+  "ENC": [
+    "Eizo"
+  ],
+  "ENM": [
+    "ENMAR"
+  ],
+  "ENV": [
+    "Envision Peripherals"
+  ],
+  "EPI": [
+    "Envision"
+  ],
+  "FAC": [
+    "Yuraku"
+  ],
+  "FAY": [
+    "Faytech"
+  ],
+  "FLU": [
+    "Fluid"
+  ],
+  "FND": [
+    "Founder"
+  ],
+  "FNI": [
+    "FUNAI"
+  ],
+  "FSN": [
+    "D&T"
+  ],
+  "FUJ": [
+    "Fujitsu"
+  ],
+  "FUS": [
+    "Fujitsu Siemens"
+  ],
+  "GDH": [
+    "Philco"
+  ],
+  "GRE": [
+    "GreBear"
+  ],
+  "GRN": [
+    "Green House"
+  ],
+  "GRU": [
+    "Grundig"
+  ],
+  "GSM": [
+    "Goldstar"
+  ],
+  "GTW": [
+    "Gateway"
+  ],
+  "GWD": [
+    "GreenWood"
+  ],
+  "GWY": [
+    "Gateway"
+  ],
+  "HAI": [
+    "Haier"
+  ],
+  "HAN": [
+    "Cbox"
+  ],
+  "HAR": [
+    "Haier"
+  ],
+  "HAT": [
+    "Huion"
+  ],
+  "HCM": [
+    "HCL"
+  ],
+  "HEC": [
+    "Hitachi"
+  ],
+  "HED": [
+    "Hedy"
+  ],
+  "HEI": [
+    "Hyundai"
+  ],
+  "HII": [
+    "Higer"
+  ],
+  "HIK": [
+    "Hikvision"
+  ],
+  "HIQ": [
+    "Hyundai ImageQuest"
+  ],
+  "HIT": [
+    "Hitachi"
+  ],
+  "HPC": [
+    "Erisson"
+  ],
+  "HPN": [
+    "HP"
+  ],
+  "HRE": [
+    "Haier"
+  ],
+  "HRT": [
+    "Hercules"
+  ],
+  "HSD": [
+    "HannStar"
+  ],
+  "HSG": [
+    "Hannspree"
+  ],
+  "HSL": [
+    "Hansol"
+  ],
+  "HSP": [
+    "HannStar"
+  ],
+  "HTC": [
+    "Hitachi"
+  ],
+  "HUG": [
+    "Hugon"
+  ],
+  "HUY": [
+    "HUYINIUDA"
+  ],
+  "HWP": [
+    "HP"
+  ],
+  "HWV": [
+    "HUAWEI"
+  ],
+  "HXF": [
+    "BlueCase"
+  ],
+  "ICP": [
+    "IC Power"
+  ],
+  "IGM": [
+    "Videoseven"
+  ],
+  "IMP": [
+    "Impression"
+  ],
+  "INL": [
+    "InnoLux Display"
+  ],
+  "IQT": [
+    "Hyundai ImageQuest"
+  ],
+  "ITA": [
+    "Easy Living"
+  ],
+  "IVM": [
+    "Iiyama"
+  ],
+  "JEN": [
+    "Jean"
+  ],
+  "JRY": [
+    "VIZTA"
+  ],
+  "KDM": [
+    "Korea Data Systems"
+  ],
+  "KOA": [
+    "Konka"
+  ],
+  "LAC": [
+    "LaCie"
+  ],
+  "LCA": [
+    "LaCie"
+  ],
+  "LCD": [
+    "Toshiba"
+  ],
+  "LCS": [
+    "Lenovo"
+  ],
+  "LEN": [
+    "Lenovo"
+  ],
+  "LEO": [
+    "Lenovo"
+  ],
+  "LHC": [
+    "Denver"
+  ],
+  "LNX": [
+    "Lanix"
+  ],
+  "LTN": [
+    "Lite-On"
+  ],
+  "MAG": [
+    "MSI"
+  ],
+  "MAX": [
+    "Belinea"
+  ],
+  "MEA": [
+    "Medion"
+  ],
+  "MEB": [
+    "Medion"
+  ],
+  "MED": [
+    "Medion"
+  ],
+  "MEI": [
+    "Panasonic"
+  ],
+  "MEL": [
+    "Mitsubishi"
+  ],
+  "MSC": [
+    "Syscom"
+  ],
+  "MST": [
+    "MStar"
+  ],
+  "MTC": [
+    "MiTAC"
+  ],
+  "MTX": [
+    "Matrox"
+  ],
+  "MUS": [
+    "Mecer"
+  ],
+  "MZI": [
+    "Digital Vision"
+  ],
+  "NCI": [
+    "NECCI"
+  ],
+  "NFC": [
+    "NFREN"
+  ],
+  "NIK": [
+    "Niko"
+  ],
+  "NON": [
+    "Positivo"
+  ],
+  "NOR": [
+    "Norcent"
+  ],
+  "NRC": [
+    "AOC"
+  ],
+  "NSO": [
+    "Neso"
+  ],
+  "NVI": [
+    "NVISION"
+  ],
+  "NVT": [
+    "Novatek"
+  ],
+  "NXG": [
+    "Nixeus"
+  ],
+  "OLD": [
+    "Olidata"
+  ],
+  "ONK": [
+    "Onkyo"
+  ],
+  "OPT": [
+    "Optoma"
+  ],
+  "ORN": [
+    "Orion"
+  ],
+  "OTM": [
+    "Optoma"
+  ],
+  "OTS": [
+    "AOC"
+  ],
+  "OTT": [
+    "Ottagono"
+  ],
+  "PCK": [
+    "SENSY"
+  ],
+  "PEB": [
+    "Proview"
+  ],
+  "PEG": [
+    "PEGA"
+  ],
+  "PGE": [
+    "GNR"
+  ],
+  "PGS": [
+    "Princeton"
+  ],
+  "PHI": [
+    "Philips"
+  ],
+  "PHL": [
+    "Philips"
+  ],
+  "PHT": [
+    "Philips"
+  ],
+  "PIO": [
+    "Pioneer"
+  ],
+  "PKB": [
+    "Packard Bell"
+  ],
+  "PKR": [
+    "Parker"
+  ],
+  "PLC": [
+    "Philco"
+  ],
+  "PLN": [
+    "Planar"
+  ],
+  "PLT": [
+    "PiLot"
+  ],
+  "PNR": [
+    "Planar"
+  ],
+  "POS": [
+    "Positivo"
+  ],
+  "PRE": [
+    "Prestigio"
+  ],
+  "PRT": [
+    "Princeton"
+  ],
+  "PTH": [
+    "TVS"
+  ],
+  "PTS": [
+    "Plain Tree Systems"
+  ],
+  "QBL": [
+    "QBell"
+  ],
+  "QMX": [
+    "Gericom"
+  ],
+  "QSM": [
+    "Qushimei"
+  ],
+  "QUN": [
+    "Lenovo"
+  ],
+  "QWA": [
+    "Lenovo"
+  ],
+  "RDS": [
+    "KDS"
+  ],
+  "RJT": [
+    "Ruijiang"
+  ],
+  "ROL": [
+    "Rolsen"
+  ],
+  "RUB": [
+    "Rubin"
+  ],
+  "SAM": [
+    "Samsung"
+  ],
+  "SAN": [
+    "Sanyo"
+  ],
+  "SCN": [
+    "Scanport"
+  ],
+  "SEC": [
+    "Samsung"
+  ],
+  "SEE": [
+    "SEEYOO"
+  ],
+  "SEK": [
+    "Seiki"
+  ],
+  "SHP": [
+    "Sharp"
+  ],
+  "SKY": [
+    "Skyworth"
+  ],
+  "SLE": [
+    "Slen"
+  ],
+  "SNY": [
+    "Sony"
+  ],
+  "SPT": [
+    "Sceptre Tech"
+  ],
+  "SPV": [
+    "Sunplus"
+  ],
+  "STC": [
+    "Sampo"
+  ],
+  "STI": [
+    "Semp Toshiba"
+  ],
+  "STN": [
+    "Samsung"
+  ],
+  "SUN": [
+    "Sun"
+  ],
+  "SYL": [
+    "Sylvania"
+  ],
+  "SYN": [
+    "Olevia"
+  ],
+  "SZM": [
+    "MiTAC"
+  ],
+  "TAR": [
+    "Targa Visionary"
+  ],
+  "TAT": [
+    "Tatung"
+  ],
+  "TEU": [
+    "Relisys"
+  ],
+  "TMN": [
+    "Thomson"
+  ],
+  "TOP": [
+    "TopView"
+  ],
+  "TOS": [
+    "Toshiba"
+  ],
+  "TPV": [
+    "Top Victory"
+  ],
+  "TRL": [
+    "Royal Information"
+  ],
+  "TSB": [
+    "Toshiba"
+  ],
+  "TSD": [
+    "TechniMedia"
+  ],
+  "TTE": [
+    "Thomson"
+  ],
+  "UPS": [
+    "UpStar"
+  ],
+  "VES": [
+    "Vestel"
+  ],
+  "VIT": [
+    "Vita"
+  ],
+  "VIZ": [
+    "Vizio"
+  ],
+  "VSC": [
+    "ViewSonic"
+  ],
+  "VSN": [
+    "Videoseven"
+  ],
+  "VZO": [
+    "Vizio"
+  ],
+  "WAC": [
+    "Wacom"
+  ],
+  "WAM": [
+    "Pixio"
+  ],
+  "WDE": [
+    "Westinghouse"
+  ],
+  "WDT": [
+    "Westinghouse"
+  ],
+  "WEH": [
+    "Westinghouse"
+  ],
+  "WET": [
+    "Westinghouse"
+  ],
+  "WIP": [
+    "Wipro"
+  ],
+  "WOR": [
+    "COMPAL"
+  ],
+  "WTC": [
+    "Waytec"
+  ],
+  "XEC": [
+    "SANSUI"
+  ],
+  "XER": [
+    "Xerox"
+  ],
+  "XMI": [
+    "Mi"
+  ],
+  "XVS": [
+    "XVision"
+  ],
+  "YAK": [
+    "Yakumo"
+  ],
+  "ZRN": [
+    "Zoran"
+  ]
+}
