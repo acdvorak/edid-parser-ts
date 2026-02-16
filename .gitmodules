@@ -1,6 +1,8 @@
 [submodule "submodules/linuxhw-edid"]
 	path = submodules/linuxhw-edid
 	url = https://github.com/linuxhw/EDID
+	ignore = all
 [submodule "submodules/hwdata-edid"]
 	path = submodules/hwdata-edid
 	url = https://github.com/vcrhonek/hwdata
+	ignore = all

@@ -2,4 +2,13 @@
   "files.readonlyInclude": {
     "submodules/**": true,
   },
+  "search.exclude": {
+    "submodules/linuxhw-edid/**": true,
+  },
+  "files.watcherExclude": {
+    "submodules/linuxhw-edid/**": true,
+  },
+  "files.exclude": {
+    "submodules/linuxhw-edid/**": false,
+  },
 }
