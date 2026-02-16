@@ -11,167 +11,29 @@ Supports _all JS runtimes_ (Node, browser, Deno, Bun, etc.).
 This library is a passion project I wrote in my spare time. It's a hobby, not a
 job.
 
-Issues and pull requests are welcome - just don't be offended if you don't
-receive a timely response. I'm probably just busy with family, work, and life.
-
-## What is EDID?
-
-EDID is a **small array of bytes**, hard-coded into a monitor or TV's firmware
-at manufacture time, that advertises which features a physical display
-**_claims_** to support.
-
-**Important**: EDID _cannot_ tell us anything about the current, active display
-mode, and it _cannot_ tell us whether a given display mode is actually usable
-with the current setup. It can only tell us which display modes the monitor/TV
-is _probably_ capable of displaying IFF the GPU and cable can also deliver them.
-
-### Metadata
-
-From EDID you can _usually_ derive:
-
-- **Manufacturer ID** (Apple, Samsung, LG, etc.)
-- **Product ID**
-- **Serial number**
-- **Physical dimensions** (width and height in centimeters)
-- List of supported **resolutions**, **refresh rates**, pixel formats, and
-  colorimetry
-
-With extension blocks, you may also see things like:
-
-- **Audio support** (codecs, channel counts, sample rates)
-- **Color spaces** (RGB / Y'CbCr variants)
-- **Deep color** and bits-per-channel _claims_
-- **HDR support** (HDR10, HDR10+, Dolby Vision, HLG)
-- **VRR support** (often via HDMI Forum VRR / Adaptive-Sync indicators rather
-  than a single universal flag)
-
-### Gotchas
-
-1. **Static metadata**: EDID bytes are effectively baked into the display's
-   firmware at manufacturing/assembly time: **they do not change** when the user
-   switches the current resolution/refresh/HDR mode, and they **do not tell you
-   the active mode** (only OS/GPU APIs can do that).
-2. **Unreliable values**: EDID data quality varies _wildly_. Blocks can be
-   incomplete, wrong, copy-pasted across models, updated in later revisions, or
-   even spoofed/overridden by docks, KVMs, adapters, and drivers. Do not assume
-   that EDID data is 100% accurate or trustworthy.
-3. **Non-unique**: EDIDs are not guaranteed to be globally unique. In
-   particular, serial numbers are often missing or duplicated.
-
-If you need robust display identification and "what's active right now?"
-answers, treat EDID as an identity _hint_ + capability _claims_, and combine it
-with other signals (OS display IDs, connector/path info, sink OUI/vendor blocks,
-and runtime mode queries).
-
-## Vendor IDs
-
-Plug-n-Play Vendor IDs (aka PNP IDs or VIDs) are 3-letter codes that uniquely
-identify the company that manufactured the display.
-
-Vendor IDs consist of 3 uppercase Latin letters (A-Z). Manufacturers can and
-often do have multiple VIDs.
-
-For example, the most common VIDs in consumer monitors/TVs are:
-
-| VID   | Manufacturer             |  Models |
-| :---- | :----------------------- | ------: |
-| `ACI` | Asus                     |  `5546` |
-| `ACR` | Acer                     |  `9266` |
-| `AOC` | AOC International        |  `7081` |
-| `APP` | Apple                    |  `1245` |
-| `AUO` | AU Optronics             |  `2103` |
-| `AUS` | Asus                     |  `4093` |
-| `BNQ` | BenQ                     |  `6499` |
-| `BBY` | Best Buy                 |   `283` |
-| `DEL` | Dell                     | `18260` |
-| `GBT` | Gigabyte                 |  `1052` |
-| `GSM` | LG                       | `14288` |
-| `HEC` | Hisense                  |   `437` |
-| `HPN` | Hewlett Packard          |  `3901` |
-| `HWP` | Hewlett Packard          |  `4938` |
-| `LCD` | Toshiba                  |   `165` |
-| `LEN` | Lenovo                   |  `3755` |
-| `LGD` | LG                       |  `1294` |
-| `LPL` | LG Philips               |   `190` |
-| `MEI` | Panasonic                |   `408` |
-| `MSI` | Micro-Star International |  `1963` |
-| `NEC` | NEC Corporation          |   `877` |
-| `PHL` | Philips                  |  `5920` |
-| `SAM` | Samsung                  | `18273` |
-| `SDC` | Samsung                  |   `331` |
-| `SHP` | Sharp                    |  `1260` |
-| `SNY` | Sony                     |  `1011` |
-| `TCL` | TCL Corporation          |   `585` |
-| `TOL` | TCL Corporation          |     `3` |
-| `TSB` | Toshiba                  |   `332` |
-| `VIZ` | Vizio                    |   `634` |
-| `VSC` | ViewSonic                |  `2733` |
-| `WOR` | Dell                     |   `132` |
-
-### VID database
-
-There is no single canonical, correct, complete list of all known VIDs, so I
-merged the following sources together and cleaned them up as best I could:
-
-1. My own custom list of manually-curated VIDs and short brand names for major
-   and notable manufacturers.
-2. [@linuxhw/EDID](https://github.com/linuxhw/EDID) - Real-world repository of
-   decoded EDIDs from digital and analog monitors collected by Linux users at
-   [linux-hardware.org](https://linux-hardware.org).
-3. [Lansweeper Knowledge Base article](https://community.lansweeper.com/t5/managing-assets/list-of-3-letter-monitor-manufacturer-codes/ta-p/64429)
-4. [`pnp.ids` from @vcrhonek/hwdata](https://github.com/vcrhonek/hwdata/blob/428ad3882/pnp.ids) -
-   Derived from the "official" UEFI registry, with custom patches for
-   correctness/completeness.
-5. "Official" UEFI registry (incomplete and low quality):
-   - [CSV](https://uefi.org/UEFI-PNP-Export)
-   - [HTML](https://uefi.org/PNP_ID_List)
-   - [PDF](https://uefi.org/sites/default/files/resources/PNPID_List.pdf)
-
-The `getVendorInfo(vid)` function searches each dataset for the corresponding ID
-and returns the "highest-quality" name it can find.
-
-### VID deprecation
-
-According to the
-[Unified Extensible Firmware Interface Forum](https://uefi.org/PNP_ACPI_Registry):
-
-> **Sunset of Vendor IDs in PnP Form**
->
-> Starting at the end of 2024, the UEFI Forum no longer issues new 3-letter Plug
-> and Play (PnP) Vendor Identifiers (a "VID"). For ACPI implementation purposes,
-> a 4-letter ACPI ID can be used for all situations where the ID is needed, for
-> example in creating device identifiers.
-
-As of early 2026, no manufacturers are using ACPI IDs yet; VIDs are still the
-standard identifier used in all displays.
+Issues and pull requests are welcome, but don't be offended if you don't receive
+a timely response. It probably just means I'm busy with family, work, and life.
 
 ## Usage
 
-This library exports two main API functions:
+This library exports two API functions:
 
-- `getVendorInfo(vid)` - Returns the best-available name of the vendor.
-  - Well-known and notable historical display vendors are guaranteed to return
-    short, usable, high-quality names that are UI-friendly (e.g., "Samsung"
-    instead of "Samsung Electronics Co., Ltd.").
-- `parseEdid(bytes)` - Fully decodes one or more EDID blocks, including most
-  common extensions.
+- `parseEdid(bytes)` - Fully decodes EDID blocks, including CTA-861 extensions,
+  colorimetry, and HDR static/dynamic metadata.
+- `getVendorInfo(vid)` - Returns the name of the display manufacturer.
+  - Well-known or notable display vendors have short, UI-friendly brand names
+    (e.g., "Samsung" instead of "Samsung Electronics Co., Ltd."), sourced from
+    several manually-curated lists.
+  - Less-common display vendors return whatever's in the official UEFI registry.
 
 Example:
 
 ```ts
 import { getVendorInfo, parseEdid } from '@acdvorak/edid-parser-ts';
 
-/**
- * Samsung S95C series, model QN65S95CAF, mfg. 2023.
- *
- * 4K UHD, HDR10+, VRR up to 120 Hz, 144 Hz max.
- *
- * @see https://www.displayspecifications.com/en/model/fcb13131
- * @see https://www.flatpanelshd.com/samsung_qs95c_qdoled_2023.php
- */
+/** Samsung S95C, model QN65S95CAF, ca. 2023. HDR10+, VRR, 144 Hz. */
 const SAMSUNG_S95C_EDID_BYTES = new Uint8Array([
   0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x4c, 0x2d, 0xa5, 0x73, 0x00,
-  0x0e, 0x00, 0x01, 0x01, 0x21, 0x01, 0x03, 0x80, 0x8e, 0x50, 0x78, 0x0a, 0xf4,
   // ...
 ]);
 
@@ -194,16 +56,17 @@ will output:
     "edidVersion": 1.3,
 
     // DisplayID is the modern successor to EDID.
-    // It is embedded *inside* EDID as an extension block.
+    // When present, it is stored as an extension block inside an EDID.
     "displayIdVersion": 1.2,
 
     // Range of the color palette — i.e., the outer limits of which colors the
     // display can hit (gamut/primaries), not the HDR tone curve.
     "colorGamuts": ["srgb", "display_p3", "rec_2020"],
 
-    // Bit depth describes how finely it can shade within the active gamut.
+    // Bit depth = how finely the display can shade within the active gamut.
     "maxInputSignalBitDepth": 12,
 
+    // HDR support
     "supportsHDR10": true,
     "supportsHDR10Plus": true,
     "supportsDolbyVision": false,
@@ -211,7 +74,7 @@ will output:
     // Manual Low-Latency Mode
     "supportsGameMode": false,
 
-    // Auto Low-Latency Mode (i.e., auto-detect video game consoles)
+    // Auto Low-Latency Mode (auto-detect video game consoles)
     "supportsALLM": false,
 
     // Standard/Static Refresh Rate
@@ -416,27 +279,158 @@ will output:
 }
 ```
 
+## What is EDID?
+
+EDID is a **small array of bytes**, hard-coded into a monitor or TV's firmware
+at manufacture time, that advertises which features a physical display
+**_claims_** to support.
+
+**Important**: EDID _cannot_ tell us anything about the current, active display
+mode, and it _cannot_ tell us whether a given display mode is actually usable
+with the current setup. It can only tell us which display modes the monitor/TV
+is _probably_ capable of displaying IFF the GPU and cable can also deliver them.
+
+### Metadata
+
+From EDID you can _usually_ derive:
+
+- **Manufacturer ID** (Apple, Samsung, LG, etc.)
+- **Product ID**
+- **Serial number**
+- **Physical dimensions** (width and height in centimeters)
+- List of supported **resolutions**, **refresh rates**, pixel formats, and
+  colorimetry
+
+With extension blocks, you may also see things like:
+
+- **Audio support** (codecs, channel counts, sample rates)
+- **Color spaces** (RGB / Y'CbCr variants)
+- **Deep color** and bits-per-channel _claims_
+- **HDR support** (HDR10, HDR10+, Dolby Vision, HLG)
+- **VRR support** (often via HDMI Forum VRR / Adaptive-Sync indicators rather
+  than a single universal flag)
+
+### Gotchas
+
+1. **Static metadata**: EDID bytes are effectively baked into the display's
+   firmware at manufacturing/assembly time: **they do not change** when the user
+   switches the current resolution/refresh/HDR mode, and they **do not tell you
+   the active mode** (only OS/GPU APIs can do that).
+2. **Unreliable values**: EDID data quality varies _wildly_. Blocks can be
+   incomplete, wrong, copy-pasted across models, updated in later revisions, or
+   even spoofed/overridden by docks, KVMs, adapters, and drivers. Do not assume
+   that EDID data is 100% accurate or trustworthy.
+3. **Non-unique**: EDIDs are not guaranteed to be globally unique. In
+   particular, serial numbers are often missing or duplicated.
+
+If you need robust display identification and "what's active right now?"
+answers, treat EDID as an identity _hint_ + capability _claims_, and combine it
+with other signals (OS display IDs, connector/path info, sink OUI/vendor blocks,
+and runtime mode queries).
+
+## Vendor IDs
+
+Plug-n-Play Vendor IDs (aka PNP IDs or VIDs) are 3-letter codes that uniquely
+identify the company that manufactured the display.
+
+Vendor IDs consist of 3 uppercase Latin letters (A-Z). Manufacturers can and
+often do have multiple VIDs.
+
+For example, the most common VIDs in consumer monitors/TVs are:
+
+| VID   | Manufacturer             |  Models |
+| :---- | :----------------------- | ------: |
+| `ACI` | Asus                     |  `5546` |
+| `ACR` | Acer                     |  `9266` |
+| `AOC` | AOC International        |  `7081` |
+| `APP` | Apple                    |  `1245` |
+| `AUO` | AU Optronics             |  `2103` |
+| `AUS` | Asus                     |  `4093` |
+| `BNQ` | BenQ                     |  `6499` |
+| `BBY` | Best Buy                 |   `283` |
+| `DEL` | Dell                     | `18260` |
+| `GBT` | Gigabyte                 |  `1052` |
+| `GSM` | LG                       | `14288` |
+| `HEC` | Hisense                  |   `437` |
+| `HPN` | Hewlett Packard          |  `3901` |
+| `HWP` | Hewlett Packard          |  `4938` |
+| `LCD` | Toshiba                  |   `165` |
+| `LEN` | Lenovo                   |  `3755` |
+| `LGD` | LG                       |  `1294` |
+| `LPL` | LG Philips               |   `190` |
+| `MEI` | Panasonic                |   `408` |
+| `MSI` | Micro-Star International |  `1963` |
+| `NEC` | NEC Corporation          |   `877` |
+| `PHL` | Philips                  |  `5920` |
+| `SAM` | Samsung                  | `18273` |
+| `SDC` | Samsung                  |   `331` |
+| `SHP` | Sharp                    |  `1260` |
+| `SNY` | Sony                     |  `1011` |
+| `TCL` | TCL Corporation          |   `585` |
+| `TOL` | TCL Corporation          |     `3` |
+| `TSB` | Toshiba                  |   `332` |
+| `VIZ` | Vizio                    |   `634` |
+| `VSC` | ViewSonic                |  `2733` |
+| `WOR` | Dell                     |   `132` |
+
+### VID database
+
+There is no single canonical, correct, complete list of all known VIDs, so I
+merged the following sources together and cleaned them up as best I could:
+
+1. My own custom list of manually-curated VIDs and short brand names for major
+   and notable manufacturers.
+2. [@linuxhw/EDID](https://github.com/linuxhw/EDID) - Repository of decoded
+   EDIDs from real-world digital and analog monitors, collected by Linux users
+   at [linux-hardware.org](https://linux-hardware.org).
+3. [Lansweeper Knowledge Base article](https://community.lansweeper.com/t5/managing-assets/list-of-3-letter-monitor-manufacturer-codes/ta-p/64429)
+4. [`pnp.ids` from @vcrhonek/hwdata](https://github.com/vcrhonek/hwdata/blob/428ad3882/pnp.ids) -
+   Derived from the "official" UEFI registry, with custom patches for
+   correctness/completeness.
+5. "Official" UEFI registry (incomplete and low quality):
+   - [CSV](https://uefi.org/UEFI-PNP-Export)
+   - [HTML](https://uefi.org/PNP_ID_List)
+   - [PDF](https://uefi.org/sites/default/files/resources/PNPID_List.pdf)
+
+The `getVendorInfo(vid)` function searches each dataset for the corresponding ID
+and returns the "highest-quality" name it can find.
+
+### VID deprecation
+
+According to the
+[Unified Extensible Firmware Interface Forum](https://uefi.org/PNP_ACPI_Registry):
+
+> **Sunset of Vendor IDs in PnP Form**
+>
+> Starting at the end of 2024, the UEFI Forum no longer issues new 3-letter Plug
+> and Play (PnP) Vendor Identifiers (a "VID"). For ACPI implementation purposes,
+> a 4-letter ACPI ID can be used for all situations where the ID is needed, for
+> example in creating device identifiers.
+
+As of early 2026, no manufacturers are using ACPI IDs yet; VIDs are still the
+standard identifier used in all displays.
+
 ## Development
 
-- Install dependencies:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-- Run the unit tests:
+Run the unit tests:
 
 ```bash
 npm run test
 ```
 
-- Build the library:
+Build the library:
 
 ```bash
 npm run build
 ```
 
-- Update EDID vendor ID databases:
+Update EDID vendor ID databases:
 
 ```bash
 npm run update
