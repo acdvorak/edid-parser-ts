@@ -72,10 +72,10 @@ will output:
     "supportsDolbyVision": false,
 
     // Manual Low-Latency Mode
-    "supportsGameMode": false,
+    "supportsGameMode": true,
 
     // Auto Low-Latency Mode (auto-detect video game consoles)
-    "supportsALLM": false,
+    "supportsALLM": true,
 
     // Standard/Static Refresh Rate
     "minSrrHz": 48,
